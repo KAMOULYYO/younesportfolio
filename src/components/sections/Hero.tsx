@@ -25,7 +25,7 @@ function AnimatedWord({ word, delay }: { word: string; delay: number }) {
   );
 }
 
-function TiltPhoto({ src, alt }: { src: string; alt: string }) {
+function TiltPhoto({ alt }: { alt: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -59,13 +59,13 @@ function TiltPhoto({ src, alt }: { src: string; alt: string }) {
       <div className="relative rounded-2xl overflow-hidden border border-[#C3E41D]/20"
         style={{ width: 'clamp(260px, 28vw, 420px)', height: 'clamp(320px, 36vw, 520px)' }}>
         <img
-          src={src}
+          src="/images/profile-hero.webp"
           alt={alt}
           className="w-full h-full object-cover object-top"
           fetchPriority="high"
           decoding="async"
-          width={420}
-          height={520}
+          width={520}
+          height={640}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
       </div>
@@ -252,7 +252,7 @@ export default function Hero() {
 
             {/* Right — photo */}
             <div className="order-1 lg:order-2 flex-shrink-0">
-              <TiltPhoto src={profile.photo} alt={profile.name} />
+              <TiltPhoto alt={profile.name} />
             </div>
           </div>
         </div>
