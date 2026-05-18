@@ -22,23 +22,26 @@ export default function Footer() {
               href={profile.github}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Profil GitHub de Younes Kamouly"
               className="p-2 rounded-lg border border-white/10 text-white/50 hover:text-[#C3E41D] hover:border-[#C3E41D]/50 transition-all duration-300"
             >
-              <GithubIcon className="w-5 h-5" />
+              <GithubIcon className="w-5 h-5" aria-hidden="true" />
             </a>
             <a
               href={profile.linkedin}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Profil LinkedIn de Younes Kamouly"
               className="p-2 rounded-lg border border-white/10 text-white/50 hover:text-[#C3E41D] hover:border-[#C3E41D]/50 transition-all duration-300"
             >
-              <LinkedinIcon className="w-5 h-5" />
+              <LinkedinIcon className="w-5 h-5" aria-hidden="true" />
             </a>
             <a
               href={`mailto:${profile.email}`}
+              aria-label={`Envoyer un email à ${profile.email}`}
               className="p-2 rounded-lg border border-white/10 text-white/50 hover:text-[#C3E41D] hover:border-[#C3E41D]/50 transition-all duration-300"
             >
-              <Mail className="w-5 h-5" />
+              <Mail className="w-5 h-5" aria-hidden="true" />
             </a>
           </div>
         </div>

@@ -1,8 +1,10 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { PortfolioProvider } from '@/context/PortfolioContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import Home from '@/pages/Home';
-import Admin from '@/pages/Admin';
+
+const Admin = lazy(() => import('@/pages/Admin'));
 
 export default function App() {
   return (
@@ -11,7 +13,11 @@ export default function App() {
         <PortfolioProvider>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/admin/*" element={<Admin />} />
+            <Route path="/admin/*" element={
+              <Suspense fallback={null}>
+                <Admin />
+              </Suspense>
+            } />
           </Routes>
         </PortfolioProvider>
       </ThemeProvider>

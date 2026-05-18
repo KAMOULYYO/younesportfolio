@@ -69,6 +69,10 @@ function FeaturedCard({ project, index }: { project: Project; index: number }) {
             className="w-full h-full object-cover"
             whileHover={{ scale: 1.04 }}
             transition={{ duration: 0.5 }}
+            loading="lazy"
+            decoding="async"
+            width={600}
+            height={400}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#080808] lg:block hidden" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#080808] via-black/30 to-transparent lg:hidden" />
@@ -139,6 +143,10 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
               className="w-full h-full object-cover"
               whileHover={{ scale: 1.06 }}
               transition={{ duration: 0.5 }}
+              loading="lazy"
+              decoding="async"
+              width={600}
+              height={176}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#080808] via-black/20 to-transparent" />
             <div className="absolute top-3 left-3">

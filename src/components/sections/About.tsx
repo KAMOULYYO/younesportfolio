@@ -124,6 +124,10 @@ export default function About() {
                 src={profile.photo}
                 alt={profile.name}
                 className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                loading="lazy"
+                decoding="async"
+                width={600}
+                height={256}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
               <div className="absolute bottom-5 left-5 right-5">

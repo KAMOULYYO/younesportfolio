@@ -15,9 +15,9 @@ const ROTATING_TITLES = [
 function AnimatedWord({ word, delay }: { word: string; delay: number }) {
   return (
     <motion.span
-      initial={{ opacity: 0, y: 60, filter: 'blur(12px)' }}
-      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-      transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay, ease: [0.16, 1, 0.3, 1] }}
       className="inline-block mr-[0.15em]"
     >
       {word}
@@ -49,20 +49,23 @@ function TiltPhoto({ src, alt }: { src: string; alt: string }) {
       onMouseMove={handleMouse}
       onMouseLeave={handleLeave}
       style={{ rotateX, rotateY, transformStyle: 'preserve-3d', perspective: 1000 }}
-      initial={{ opacity: 0, scale: 0.85 }}
+      initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay: 0.5, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ delay: 0.3, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       className="relative cursor-pointer select-none"
     >
-      <div className="absolute -inset-3 rounded-3xl bg-gradient-to-br from-[#C3E41D]/30 via-transparent to-violet-500/20 blur-xl" />
-      <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-[#C3E41D]/40 via-white/5 to-violet-500/30" />
+      <div className="absolute -inset-3 rounded-3xl bg-gradient-to-br from-[#C3E41D]/20 via-transparent to-violet-500/15 blur-lg" />
+      <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-[#C3E41D]/30 via-white/5 to-violet-500/20" />
       <div className="relative rounded-2xl overflow-hidden border border-[#C3E41D]/20"
         style={{ width: 'clamp(260px, 28vw, 420px)', height: 'clamp(320px, 36vw, 520px)' }}>
         <img
           src={src}
           alt={alt}
           className="w-full h-full object-cover object-top"
-          loading="lazy"
+          fetchPriority="high"
+          decoding="async"
+          width={420}
+          height={520}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
       </div>
@@ -71,7 +74,7 @@ function TiltPhoto({ src, alt }: { src: string; alt: string }) {
       <motion.div
         animate={{ y: [0, -6, 0] }}
         transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute -bottom-4 -left-4 flex items-center gap-2 px-3 py-2 rounded-xl border border-[#C3E41D]/30 bg-black/80 backdrop-blur-md text-xs font-fira text-white/80 shadow-xl"
+        className="absolute -bottom-4 -left-4 flex items-center gap-2 px-3 py-2 rounded-xl border border-[#C3E41D]/30 bg-black/90 text-xs font-fira text-white/80 shadow-xl"
         style={{ transform: 'translateZ(20px)' }}
       >
         <span className="relative flex h-2 w-2">
@@ -85,7 +88,7 @@ function TiltPhoto({ src, alt }: { src: string; alt: string }) {
       <motion.div
         animate={{ y: [0, 6, 0] }}
         transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-        className="absolute -top-4 -right-4 px-3 py-2 rounded-xl border border-violet-500/30 bg-black/80 backdrop-blur-md text-xs font-fira text-violet-300 shadow-xl"
+        className="absolute -top-4 -right-4 px-3 py-2 rounded-xl border border-violet-500/30 bg-black/90 text-xs font-fira text-violet-300 shadow-xl"
         style={{ transform: 'translateZ(20px)' }}
       >
         React · FastAPI · AI
@@ -112,15 +115,14 @@ export default function Hero() {
   const scrollTo = (id: string) => document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' });
 
   return (
-    <section id="hero" className="relative min-h-screen flex flex-col overflow-hidden">
+    <section id="hero" className="relative min-h-screen flex flex-col overflow-hidden" style={{ contain: 'layout style' }}>
       {/* Grid background */}
       <div className="absolute inset-0 grid-bg opacity-30" />
 
       {/* Radial gradients */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-[#C3E41D]/6 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 left-0 w-[400px] h-[400px] bg-violet-600/8 rounded-full blur-[100px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#C3E41D]/2 rounded-full blur-[150px]" />
+        <div className="absolute top-0 right-1/4 w-[350px] h-[350px] bg-[#C3E41D]/5 rounded-full blur-[80px]" />
+        <div className="absolute bottom-1/4 left-0 w-[280px] h-[280px] bg-violet-600/6 rounded-full blur-[60px]" />
       </div>
 
       {/* Noise overlay */}
@@ -178,10 +180,10 @@ export default function Hero() {
                   {showTitle && (
                     <motion.p
                       key={ROTATING_TITLES[titleIndex]}
-                      initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
-                      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                      exit={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
-                      transition={{ duration: 0.4 }}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -12 }}
+                      transition={{ duration: 0.3 }}
                       className="text-white/50 text-base md:text-lg font-fira tracking-wide"
                     >
                       <span className="text-[#C3E41D] mr-2">&gt;</span>
@@ -228,20 +230,20 @@ export default function Hero() {
                   </a>
                 </Button>
                 <Button size="lg" variant="secondary" asChild>
-                  <a href={profile.github} target="_blank" rel="noopener noreferrer">
-                    <GithubIcon className="w-4 h-4 mr-2" />
+                  <a href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="Profil GitHub de Younes Kamouly">
+                    <GithubIcon className="w-4 h-4 mr-2" aria-hidden="true" />
                     GitHub
                   </a>
                 </Button>
                 <Button size="lg" variant="ghost" asChild>
-                  <a href={profile.linkedin} target="_blank" rel="noopener noreferrer">
-                    <LinkedinIcon className="w-4 h-4 mr-2" />
+                  <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" aria-label="Profil LinkedIn de Younes Kamouly">
+                    <LinkedinIcon className="w-4 h-4 mr-2" aria-hidden="true" />
                     LinkedIn
                   </a>
                 </Button>
                 <Button size="lg" variant="ghost" asChild>
-                  <a href={profile.cvUrl} download>
-                    <Download className="w-4 h-4 mr-2" />
+                  <a href={profile.cvUrl} download aria-label="Télécharger le CV de Younes Kamouly">
+                    <Download className="w-4 h-4 mr-2" aria-hidden="true" />
                     CV
                   </a>
                 </Button>
