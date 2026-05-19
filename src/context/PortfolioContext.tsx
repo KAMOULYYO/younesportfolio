@@ -1,5 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { PortfolioData, Profile, Skill, Project, Video, Experience, Education, Testimonial } from '@/types/portfolio';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { onSnapshot, setDoc } from 'firebase/firestore';
+import { portfolioDocRef } from '@/lib/firebase';
+import type {
+  PortfolioData, Profile, Skill, Project,
+  Video, Experience, Education, Testimonial,
+} from '@/types/portfolio';
 import { defaultPortfolioData } from '@/data/defaultPortfolioData';
 
 interface PortfolioContextType {
@@ -27,10 +32,9 @@ interface PortfolioContextType {
 }
 
 const PortfolioContext = createContext<PortfolioContextType | null>(null);
-
 const STORAGE_KEY = 'portfolio_data';
 
-function loadData(): PortfolioData {
+function localLoad(): PortfolioData {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) return JSON.parse(saved) as PortfolioData;
@@ -43,71 +47,91 @@ function genId() {
 }
 
 export function PortfolioProvider({ children }: { children: React.ReactNode }) {
-  const [data, setData] = useState<PortfolioData>(loadData);
+  const [data, setData] = useState<PortfolioData>(localLoad);
+  // true une fois que Firestore a répondu (succès ou erreur)
+  const syncedRef = useRef(false);
 
+  // ── Écoute Firestore en temps réel ──────────────────────────────────
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  }, [data]);
+    const unsub = onSnapshot(
+      portfolioDocRef,
+      (snap) => {
+        if (snap.exists()) {
+          const remote = snap.data() as PortfolioData;
+          setData(remote);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(remote));
+        } else {
+          // Première fois : on pousse les données par défaut sur Firestore
+          setDoc(portfolioDocRef, defaultPortfolioData);
+        }
+        syncedRef.current = true;
+      },
+      () => {
+        // Hors-ligne ou erreur réseau : on garde le localStorage
+        syncedRef.current = true;
+      },
+    );
+    return () => unsub();
+  }, []);
 
-  const updateProfile = (profile: Profile) =>
-    setData(d => ({ ...d, profile }));
+  // ── Sauvegarde vers Firestore + localStorage à chaque changement ────
+  function save(next: PortfolioData) {
+    setData(next);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    // On ne sauvegarde vers Firestore que si la synchro initiale est faite
+    // (évite d'écraser les données Firestore avec le localStorage au boot)
+    if (syncedRef.current) {
+      setDoc(portfolioDocRef, next).catch(() => {/* hors-ligne — pas grave */});
+    }
+  }
+
+  const updateProfile = (profile: Profile) => save({ ...data, profile });
 
   const addSkill = (skill: Omit<Skill, 'id'>) =>
-    setData(d => ({ ...d, skills: [...d.skills, { ...skill, id: genId() }] }));
-
+    save({ ...data, skills: [...data.skills, { ...skill, id: genId() }] });
   const updateSkill = (id: string, skill: Partial<Skill>) =>
-    setData(d => ({ ...d, skills: d.skills.map(s => s.id === id ? { ...s, ...skill } : s) }));
-
+    save({ ...data, skills: data.skills.map(s => s.id === id ? { ...s, ...skill } : s) });
   const deleteSkill = (id: string) =>
-    setData(d => ({ ...d, skills: d.skills.filter(s => s.id !== id) }));
+    save({ ...data, skills: data.skills.filter(s => s.id !== id) });
 
   const addProject = (project: Omit<Project, 'id'>) =>
-    setData(d => ({ ...d, projects: [...d.projects, { ...project, id: genId() }] }));
-
+    save({ ...data, projects: [...data.projects, { ...project, id: genId() }] });
   const updateProject = (id: string, project: Partial<Project>) =>
-    setData(d => ({ ...d, projects: d.projects.map(p => p.id === id ? { ...p, ...project } : p) }));
-
+    save({ ...data, projects: data.projects.map(p => p.id === id ? { ...p, ...project } : p) });
   const deleteProject = (id: string) =>
-    setData(d => ({ ...d, projects: d.projects.filter(p => p.id !== id) }));
+    save({ ...data, projects: data.projects.filter(p => p.id !== id) });
 
   const addVideo = (video: Omit<Video, 'id'>) =>
-    setData(d => ({ ...d, videos: [...d.videos, { ...video, id: genId() }] }));
-
+    save({ ...data, videos: [...data.videos, { ...video, id: genId() }] });
   const updateVideo = (id: string, video: Partial<Video>) =>
-    setData(d => ({ ...d, videos: d.videos.map(v => v.id === id ? { ...v, ...video } : v) }));
-
+    save({ ...data, videos: data.videos.map(v => v.id === id ? { ...v, ...video } : v) });
   const deleteVideo = (id: string) =>
-    setData(d => ({ ...d, videos: d.videos.filter(v => v.id !== id) }));
+    save({ ...data, videos: data.videos.filter(v => v.id !== id) });
 
   const addExperience = (exp: Omit<Experience, 'id'>) =>
-    setData(d => ({ ...d, experiences: [...d.experiences, { ...exp, id: genId() }] }));
-
+    save({ ...data, experiences: [...data.experiences, { ...exp, id: genId() }] });
   const updateExperience = (id: string, exp: Partial<Experience>) =>
-    setData(d => ({ ...d, experiences: d.experiences.map(e => e.id === id ? { ...e, ...exp } : e) }));
-
+    save({ ...data, experiences: data.experiences.map(e => e.id === id ? { ...e, ...exp } : e) });
   const deleteExperience = (id: string) =>
-    setData(d => ({ ...d, experiences: d.experiences.filter(e => e.id !== id) }));
+    save({ ...data, experiences: data.experiences.filter(e => e.id !== id) });
 
   const addEducation = (edu: Omit<Education, 'id'>) =>
-    setData(d => ({ ...d, education: [...d.education, { ...edu, id: genId() }] }));
-
+    save({ ...data, education: [...data.education, { ...edu, id: genId() }] });
   const updateEducation = (id: string, edu: Partial<Education>) =>
-    setData(d => ({ ...d, education: d.education.map(e => e.id === id ? { ...e, ...edu } : e) }));
-
+    save({ ...data, education: data.education.map(e => e.id === id ? { ...e, ...edu } : e) });
   const deleteEducation = (id: string) =>
-    setData(d => ({ ...d, education: d.education.filter(e => e.id !== id) }));
+    save({ ...data, education: data.education.filter(e => e.id !== id) });
 
   const addTestimonial = (t: Omit<Testimonial, 'id'>) =>
-    setData(d => ({ ...d, testimonials: [...d.testimonials, { ...t, id: genId() }] }));
-
+    save({ ...data, testimonials: [...data.testimonials, { ...t, id: genId() }] });
   const updateTestimonial = (id: string, t: Partial<Testimonial>) =>
-    setData(d => ({ ...d, testimonials: d.testimonials.map(tm => tm.id === id ? { ...tm, ...t } : tm) }));
-
+    save({ ...data, testimonials: data.testimonials.map(tm => tm.id === id ? { ...tm, ...t } : tm) });
   const deleteTestimonial = (id: string) =>
-    setData(d => ({ ...d, testimonials: d.testimonials.filter(t => t.id !== id) }));
+    save({ ...data, testimonials: data.testimonials.filter(t => t.id !== id) });
 
   const resetData = () => {
     localStorage.removeItem(STORAGE_KEY);
+    setDoc(portfolioDocRef, defaultPortfolioData).catch(() => {});
     setData(defaultPortfolioData);
   };
 
