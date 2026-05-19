@@ -33,7 +33,7 @@ export default function Education() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.15 }}
               whileHover={{ scale: 1.01, borderColor: 'rgba(195,228,29,0.2)' }}
-              className="p-8 rounded-2xl border border-white/7 bg-white/3 backdrop-blur-sm transition-all duration-300"
+              className="p-8 rounded-2xl border border-white/7 bg-white/[0.03] transition-all duration-300"
             >
               <div className="flex items-start gap-4 mb-4">
                 <div className="p-3 rounded-xl bg-[#C3E41D]/10 flex-shrink-0">

@@ -1,6 +1,4 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { onSnapshot, setDoc } from 'firebase/firestore';
-import { portfolioDocRef } from '@/lib/firebase';
 import type {
   PortfolioData, Profile, Skill, Project,
   Video, Experience, Education, Testimonial,
@@ -48,40 +46,46 @@ function genId() {
 
 export function PortfolioProvider({ children }: { children: React.ReactNode }) {
   const [data, setData] = useState<PortfolioData>(localLoad);
-  // true une fois que Firestore a répondu (succès ou erreur)
   const syncedRef = useRef(false);
+  // Refs vers les fonctions Firestore chargées dynamiquement
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const fsRef = useRef<{ setDoc: (ref: any, data: any) => Promise<void>; docRef: any } | null>(null);
 
-  // ── Écoute Firestore en temps réel ──────────────────────────────────
+  // ── Import dynamique Firebase — ne bloque pas le rendu initial ──────
   useEffect(() => {
-    const unsub = onSnapshot(
-      portfolioDocRef,
-      (snap) => {
-        if (snap.exists()) {
-          const remote = snap.data() as PortfolioData;
-          setData(remote);
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(remote));
-        } else {
-          // Première fois : on pousse les données par défaut sur Firestore
-          setDoc(portfolioDocRef, defaultPortfolioData);
-        }
-        syncedRef.current = true;
-      },
-      () => {
-        // Hors-ligne ou erreur réseau : on garde le localStorage
-        syncedRef.current = true;
-      },
-    );
-    return () => unsub();
+    let unsub: (() => void) | null = null;
+
+    Promise.all([
+      import('@/lib/firebase'),
+      import('firebase/firestore'),
+    ]).then(([{ portfolioDocRef }, { onSnapshot, setDoc }]) => {
+      fsRef.current = { setDoc, docRef: portfolioDocRef };
+
+      unsub = onSnapshot(
+        portfolioDocRef,
+        (snap) => {
+          if (snap.exists()) {
+            const remote = snap.data() as PortfolioData;
+            setData(remote);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(remote));
+          } else {
+            setDoc(portfolioDocRef, defaultPortfolioData);
+          }
+          syncedRef.current = true;
+        },
+        () => { syncedRef.current = true; },
+      );
+    }).catch(() => { syncedRef.current = true; });
+
+    return () => { unsub?.(); };
   }, []);
 
-  // ── Sauvegarde vers Firestore + localStorage à chaque changement ────
+  // ── Sauvegarde localStorage + Firestore ─────────────────────────────
   function save(next: PortfolioData) {
     setData(next);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    // On ne sauvegarde vers Firestore que si la synchro initiale est faite
-    // (évite d'écraser les données Firestore avec le localStorage au boot)
-    if (syncedRef.current) {
-      setDoc(portfolioDocRef, next).catch(() => {/* hors-ligne — pas grave */});
+    if (syncedRef.current && fsRef.current) {
+      fsRef.current.setDoc(fsRef.current.docRef, next).catch(() => {});
     }
   }
 
@@ -131,8 +135,10 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
 
   const resetData = () => {
     localStorage.removeItem(STORAGE_KEY);
-    setDoc(portfolioDocRef, defaultPortfolioData).catch(() => {});
     setData(defaultPortfolioData);
+    if (fsRef.current) {
+      fsRef.current.setDoc(fsRef.current.docRef, defaultPortfolioData).catch(() => {});
+    }
   };
 
   return (

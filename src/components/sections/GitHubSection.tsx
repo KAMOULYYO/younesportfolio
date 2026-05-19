@@ -54,7 +54,7 @@ export default function GitHubSection() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.08, duration: 0.4 }}
               whileHover={{ scale: 1.02, borderColor: 'rgba(195,228,29,0.2)' }}
-              className="p-5 rounded-xl border border-white/7 bg-white/3 backdrop-blur-sm hover:bg-white/5 transition-all duration-300 group block"
+              className="p-5 rounded-xl border border-white/7 bg-white/[0.03] hover:bg-white/5 transition-all duration-300 group block"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">

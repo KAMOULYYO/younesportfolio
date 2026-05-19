@@ -35,7 +35,7 @@ export default function Testimonials() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.12 }}
               whileHover={{ scale: 1.02, borderColor: 'rgba(195,228,29,0.2)' }}
-              className="p-6 rounded-2xl border border-white/7 bg-white/3 backdrop-blur-sm transition-all duration-300 flex flex-col"
+              className="p-6 rounded-2xl border border-white/7 bg-white/[0.03] transition-all duration-300 flex flex-col"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex">
@@ -55,6 +55,10 @@ export default function Testimonials() {
                   src={t.avatar}
                   alt={t.name}
                   className="w-10 h-10 rounded-full object-cover border border-white/10"
+                  loading="lazy"
+                  decoding="async"
+                  width={40}
+                  height={40}
                 />
                 <div>
                   <p className="text-white font-semibold text-sm">{t.name}</p>

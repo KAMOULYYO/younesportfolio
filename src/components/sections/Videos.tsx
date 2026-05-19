@@ -26,7 +26,7 @@ function VideoCard({ video, index, onClick }: { video: Video; index: number; onC
           </motion.div>
         </div>
       </div>
-      <div className="p-4 bg-white/3 backdrop-blur-sm">
+      <div className="p-4 bg-white/[0.03]">
         <h3 className="text-white font-semibold text-sm mb-1 group-hover:text-[#C3E41D] transition-colors">
           {video.title}
         </h3>
