@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { usePortfolio } from '@/context/PortfolioContext';
 import { FolderOpen, Code2, Video, Briefcase, GraduationCap, MessageSquare, RotateCcw, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,7 @@ export default function AdminDashboard() {
   const { data, resetData } = usePortfolio();
 
   const stats = [
-    { label: 'Projets', value: data.projects.length, icon: FolderOpen, to: '/admin/projects', color: '#C3E41D' },
+    { label: 'Projets', value: data.projects.length, icon: FolderOpen, to: '/admin/projects', color: 'var(--color-accent)' },
     { label: 'Compétences', value: data.skills.length, icon: Code2, to: '/admin/skills', color: '#7c3aed' },
     { label: 'Vidéos', value: data.videos.length, icon: Video, to: '/admin/videos', color: '#06b6d4' },
     { label: 'Expériences', value: data.experiences.length, icon: Briefcase, to: '/admin/experience', color: '#f59e0b' },
@@ -17,28 +17,28 @@ export default function AdminDashboard() {
   ];
 
   const handleReset = () => {
-    if (window.confirm('Réinitialiser toutes les données ? Cette action est irréversible.')) {
+    if (window.confirm('Remplacer TOUT le contenu en ligne par les données par défaut ? Cette action est irréversible.')) {
       resetData();
     }
   };
 
   return (
     <div className="p-8">
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="mb-10"
       >
         <h1 className="text-3xl font-bold text-white mb-2">
-          Bonjour, <span className="text-[#C3E41D]">{data.profile.name}</span> 👋
+          Bonjour, <span className="text-accent">{data.profile.name}</span> 👋
         </h1>
         <p className="text-white/40">Gérez le contenu de votre portfolio depuis ce tableau de bord.</p>
-      </motion.div>
+      </m.div>
 
       {/* Stats grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
         {stats.map((stat, i) => (
-          <motion.div
+          <m.div
             key={stat.label}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -54,12 +54,12 @@ export default function AdminDashboard() {
               </div>
               <p className="text-white/40 text-sm group-hover:text-white/60 transition-colors">{stat.label}</p>
             </NavLink>
-          </motion.div>
+          </m.div>
         ))}
       </div>
 
       {/* Profile preview */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
@@ -69,17 +69,17 @@ export default function AdminDashboard() {
           <img src={data.profile.photo} alt="" className="w-14 h-14 rounded-xl object-cover border border-white/10" />
           <div>
             <h3 className="text-white font-bold">{data.profile.name}</h3>
-            <p className="text-[#C3E41D] text-sm">{data.profile.title}</p>
+            <p className="text-accent text-sm">{data.profile.title}</p>
             <p className="text-white/30 text-xs">{data.profile.email}</p>
           </div>
         </div>
         <p className="text-white/50 text-sm line-clamp-2">{data.profile.bio}</p>
-      </motion.div>
+      </m.div>
 
       {/* Actions */}
       <div className="flex flex-wrap gap-3">
         <Button variant="outline" asChild>
-          <a href="/" target="_blank">
+          <a href="/" target="_blank" rel="noopener noreferrer">
             <Eye className="w-4 h-4 mr-2" />
             Voir le portfolio public
           </a>

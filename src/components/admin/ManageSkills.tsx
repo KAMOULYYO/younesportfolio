@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, Save, CheckCircle } from 'lucide-react';
 import { usePortfolio } from '@/context/PortfolioContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { Skill } from '@/types/portfolio';
+import { skillLevelLabel } from '@/lib/skillLevel';
 
 const categories = ['frontend', 'backend', 'database', 'tools', 'ai'] as const;
 
@@ -36,17 +37,18 @@ export default function ManageSkills() {
 
   return (
     <div className="p-8 max-w-4xl">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+      <m.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
         <h1 className="text-2xl font-bold text-white mb-1">Compétences</h1>
         <p className="text-white/40 text-sm">{data.skills.length} compétences au total</p>
-      </motion.div>
+        <p className="text-white/30 text-xs mt-1">Niveau affiché sur le site : 85+ = Quotidien · 70–84 = Projets · moins = Notions</p>
+      </m.div>
 
       {/* Add form */}
-      <motion.form
+      <m.form
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         onSubmit={handleAdd}
-        className="p-5 rounded-xl border border-[#C3E41D]/20 bg-[#C3E41D]/3 mb-8 space-y-4"
+        className="p-5 rounded-xl border border-accent/20 bg-accent/3 mb-8 space-y-4"
       >
         <h3 className="text-white font-semibold">Ajouter une compétence</h3>
         <div className="grid sm:grid-cols-3 gap-3">
@@ -59,9 +61,9 @@ export default function ManageSkills() {
           <select
             value={form.category}
             onChange={e => setForm(f => ({ ...f, category: e.target.value as Skill['category'] }))}
-            className="h-10 rounded-lg border border-white/10 bg-white/5 text-white text-sm px-3 focus:outline-none focus:ring-1 focus:ring-[#C3E41D]"
+            className="h-10 rounded-lg border border-white/10 bg-white/5 text-white text-sm px-3 focus:outline-none focus:ring-1 focus:ring-accent"
           >
-            {categories.map(c => <option key={c} value={c} className="bg-[#111]">{c}</option>)}
+            {categories.map(c => <option key={c} value={c} className="bg-surface">{c}</option>)}
           </select>
           <div className="flex items-center gap-2">
             <Input
@@ -79,12 +81,12 @@ export default function ManageSkills() {
             <Plus className="w-4 h-4 mr-1" /> Ajouter
           </Button>
           {saved && (
-            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-1.5 text-[#C3E41D] text-sm">
+            <m.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-1.5 text-accent text-sm">
               <CheckCircle className="w-4 h-4" /> Ajouté !
-            </motion.span>
+            </m.span>
           )}
         </div>
-      </motion.form>
+      </m.form>
 
       {/* List */}
       <div className="space-y-8">
@@ -97,7 +99,7 @@ export default function ManageSkills() {
               <div className="space-y-2">
                 <AnimatePresence>
                   {skills.map(skill => (
-                    <motion.div
+                    <m.div
                       key={skill.id}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -115,9 +117,9 @@ export default function ManageSkills() {
                         onChange={e => updateSkill(skill.id, { level: Number(e.target.value) })}
                         className="w-20 h-8 text-sm"
                       />
-                      <span className="text-white/30 text-xs w-6">{skill.level}%</span>
+                      <span className="text-white/40 text-xs w-16" title="Affiché sur le site">{skillLevelLabel(skill.level).label}</span>
                       <div className="w-24 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                        <div className="h-full bg-[#C3E41D] rounded-full" style={{ width: `${skill.level}%` }} />
+                        <div className="h-full bg-accent rounded-full" style={{ width: `${skill.level}%` }} />
                       </div>
                       <Button
                         variant="ghost"
@@ -127,7 +129,7 @@ export default function ManageSkills() {
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </Button>
-                    </motion.div>
+                    </m.div>
                   ))}
                 </AnimatePresence>
               </div>

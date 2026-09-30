@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, Edit2, X, Check } from 'lucide-react';
 import { usePortfolio } from '@/context/PortfolioContext';
 import { Button } from '@/components/ui/button';
@@ -28,7 +28,7 @@ function ExpForm({ initial, onSave, onCancel, title: formTitle }: {
   };
 
   return (
-    <div className="p-5 rounded-xl border border-[#C3E41D]/20 bg-[#C3E41D]/3 space-y-3">
+    <div className="p-5 rounded-xl border border-accent/20 bg-accent/3 space-y-3">
       <h3 className="text-white font-semibold">{formTitle}</h3>
       <div className="grid sm:grid-cols-2 gap-3">
         <Input placeholder="Titre du poste" value={form.title} onChange={set('title')} />
@@ -36,9 +36,9 @@ function ExpForm({ initial, onSave, onCancel, title: formTitle }: {
       </div>
       <div className="grid sm:grid-cols-2 gap-3">
         <Input placeholder="Période (ex: 2022-2023)" value={form.period} onChange={set('period')} />
-        <select value={form.type} onChange={set('type')} className="h-10 rounded-lg border border-white/10 bg-white/5 text-white text-sm px-3 focus:outline-none focus:ring-1 focus:ring-[#C3E41D]">
-          <option value="work" className="bg-[#111]">Professionnel</option>
-          <option value="academic" className="bg-[#111]">Académique</option>
+        <select value={form.type} onChange={set('type')} className="h-10 rounded-lg border border-white/10 bg-white/5 text-white text-sm px-3 focus:outline-none focus:ring-1 focus:ring-accent">
+          <option value="work" className="bg-surface">Professionnel</option>
+          <option value="academic" className="bg-surface">Académique</option>
         </select>
       </div>
       <Textarea placeholder="Description" value={form.description} onChange={set('description')} className="min-h-[80px]" />
@@ -72,25 +72,25 @@ export default function ManageExperience() {
 
   return (
     <div className="p-8 max-w-3xl">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8 flex items-center justify-between flex-wrap gap-4">
+      <m.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8 flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white mb-1">Expériences</h1>
           <p className="text-white/40 text-sm">{data.experiences.length} expériences</p>
         </div>
         <Button onClick={() => setAdding(true)} disabled={adding}><Plus className="w-4 h-4 mr-2" /> Ajouter</Button>
-      </motion.div>
+      </m.div>
 
       <AnimatePresence>
         {adding && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mb-6">
+          <m.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mb-6">
             <ExpForm title="Nouvelle expérience" initial={empty} onSave={e => { addExperience(e); setAdding(false); }} onCancel={() => setAdding(false)} />
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
       <div className="space-y-3">
         {data.experiences.map((exp, i) => (
-          <motion.div key={exp.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.05 }}>
+          <m.div key={exp.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.05 }}>
             {editing === exp.id ? (
               <ExpForm title="Modifier" initial={exp} onSave={e => { updateExperience(exp.id, e); setEditing(null); }} onCancel={() => setEditing(null)} />
             ) : (
@@ -102,7 +102,7 @@ export default function ManageExperience() {
                       {exp.type === 'work' ? 'Pro' : 'Académique'}
                     </Badge>
                   </div>
-                  <p className="text-[#C3E41D] text-xs">{exp.company}</p>
+                  <p className="text-accent text-xs">{exp.company}</p>
                   <p className="text-white/30 text-xs font-fira mt-0.5">{exp.period}</p>
                 </div>
                 <div className="flex gap-2">
@@ -111,7 +111,7 @@ export default function ManageExperience() {
                 </div>
               </div>
             )}
-          </motion.div>
+          </m.div>
         ))}
       </div>
     </div>

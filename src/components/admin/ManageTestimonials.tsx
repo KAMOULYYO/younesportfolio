@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, Edit2, X, Check, Star } from 'lucide-react';
 import { usePortfolio } from '@/context/PortfolioContext';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,7 @@ function TestForm({ initial, onSave, onCancel, title }: {
     setForm(f => ({ ...f, [k]: e.target.value }));
 
   return (
-    <div className="p-5 rounded-xl border border-[#C3E41D]/20 bg-[#C3E41D]/3 space-y-3">
+    <div className="p-5 rounded-xl border border-accent/20 bg-accent/3 space-y-3">
       <h3 className="text-white font-semibold">{title}</h3>
       <div className="grid sm:grid-cols-2 gap-3">
         <Input placeholder="Nom" value={form.name} onChange={set('name')} />
@@ -35,7 +35,7 @@ function TestForm({ initial, onSave, onCancel, title }: {
         <span className="text-white/50 text-sm">Note :</span>
         {[1, 2, 3, 4, 5].map(n => (
           <button key={n} type="button" onClick={() => setForm(f => ({ ...f, rating: n }))}>
-            <Star className="w-5 h-5" fill={n <= form.rating ? '#C3E41D' : 'transparent'} stroke={n <= form.rating ? '#C3E41D' : 'rgba(255,255,255,0.3)'} />
+            <Star className="w-5 h-5" fill={n <= form.rating ? 'var(--color-accent)' : 'transparent'} stroke={n <= form.rating ? 'var(--color-accent)' : 'rgba(255,255,255,0.3)'} />
           </button>
         ))}
       </div>
@@ -54,25 +54,25 @@ export default function ManageTestimonials() {
 
   return (
     <div className="p-8 max-w-3xl">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8 flex items-center justify-between flex-wrap gap-4">
+      <m.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8 flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white mb-1">Témoignages</h1>
           <p className="text-white/40 text-sm">{data.testimonials.length} témoignages</p>
         </div>
         <Button onClick={() => setAdding(true)} disabled={adding}><Plus className="w-4 h-4 mr-2" /> Ajouter</Button>
-      </motion.div>
+      </m.div>
 
       <AnimatePresence>
         {adding && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mb-6">
+          <m.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mb-6">
             <TestForm title="Nouveau témoignage" initial={empty} onSave={t => { addTestimonial(t); setAdding(false); }} onCancel={() => setAdding(false)} />
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
       <div className="space-y-3">
         {data.testimonials.map((t, i) => (
-          <motion.div key={t.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.05 }}>
+          <m.div key={t.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.05 }}>
             {editing === t.id ? (
               <TestForm title="Modifier" initial={t} onSave={u => { updateTestimonial(t.id, u); setEditing(null); }} onCancel={() => setEditing(null)} />
             ) : (
@@ -83,7 +83,7 @@ export default function ManageTestimonials() {
                     <h3 className="text-white text-sm font-semibold">{t.name}</h3>
                     <div className="flex">
                       {Array.from({ length: t.rating }).map((_, ri) => (
-                        <Star key={ri} className="w-3 h-3" fill="#C3E41D" stroke="#C3E41D" />
+                        <Star key={ri} className="w-3 h-3" fill="var(--color-accent)" stroke="var(--color-accent)" />
                       ))}
                     </div>
                   </div>
@@ -96,7 +96,7 @@ export default function ManageTestimonials() {
                 </div>
               </div>
             )}
-          </motion.div>
+          </m.div>
         ))}
       </div>
     </div>

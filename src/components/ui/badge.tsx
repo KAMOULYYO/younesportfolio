@@ -7,7 +7,7 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-[#C3E41D]/15 text-[#C3E41D] border border-[#C3E41D]/30',
+        default: 'bg-accent/15 text-accent border border-accent/30',
         secondary: 'bg-white/5 text-white/70 border border-white/10',
         destructive: 'bg-red-500/15 text-red-400 border border-red-500/30',
         outline: 'border border-white/20 text-white/70',
@@ -27,4 +27,5 @@ function Badge({ className, variant, ...props }: BadgeProps) {
   return <div className={cn(badgeVariants({ variant }), className)} {...props} />;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { Badge, badgeVariants };

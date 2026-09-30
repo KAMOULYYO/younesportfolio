@@ -1,0 +1,25 @@
+name: Supabase keep-alive
+
+# Un projet Supabase gratuit se met en pause après 7 jours sans activité.
+# Ce job lit la base tous les 3 jours pour la garder active (gratuit).
+on:
+  schedule:
+    - cron: '0 8 */3 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ping Supabase
+        run: |
+          set -a; . ./.env; set +a
+          test -n "$VITE_SUPABASE_URL" || { echo "VITE_SUPABASE_URL manquant dans .env"; exit 1; }
+          curl -fsS "$VITE_SUPABASE_URL/rest/v1/portfolio?select=id&limit=1" \
+            -H "apikey: $VITE_SUPABASE_ANON_KEY"
